@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -39,3 +40,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
   def __str__(self):
       return self.email
+
+
+class Agency(models.Model):
+  agency_name = models.CharField(max_length=255)
+  address = models.CharField(max_length=255)
+  phone_number = models.CharField(max_length=20)
+  email = models.EmailField(unique=True)
+  created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='agencies')
+
+  def __str__(self):
+    return self.agency_name

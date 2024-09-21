@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import CustomUser
 
 class CustomUserSerializer(serializers.ModelSerializer):
-  
+
   class Meta:
     model = CustomUser
     fields = ['email', 'name', 'password', 'is_active', 'is_staff']
@@ -11,6 +11,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
     }
 
   def create(self, validated_data):
+    if not validated_data.get('is_staff', False):
+      validated_data['is_active'] = False
     user = CustomUser(
       email=validated_data['email'],
       name=validated_data.get('name', ''),
