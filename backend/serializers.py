@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Agency
 
 class CustomUserSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = CustomUser
-    fields = ['email', 'name', 'password', 'is_active', 'is_staff']
+    fields = ['id', 'email', 'name', 'password', 'is_active', 'is_staff']
     extra_kwargs = {
       'password': {'write_only': True}
     }
@@ -37,3 +37,25 @@ class CreateSuperUserSerializer(CustomUserSerializer):
     validated_data['is_staff'] = True
     validated_data['is_superuser'] = True
     return super().create(validated_data)
+
+# class AgencySerializer(serializers.ModelSerializer):
+#   class Meta:
+#     model = Agency
+#     fields = ['id', 'agency_name', 'address', 'phone_number', 'email', 'created_by']
+#     read_only_fields = ['created_by']
+
+
+class AgencySerializer(serializers.ModelSerializer):
+  created_by = serializers.SerializerMethodField()
+
+  class Meta:
+    model = Agency
+    fields = ['id','agency_name', 'address', 'phone_number', 'email', 'created_by']
+
+  def get_created_by(self, obj):
+    return {
+      "id": obj.created_by.id,
+      "name": obj.created_by.name,
+      "email": obj.created_by.email,
+      "is_active": obj.created_by.is_active,
+    }
