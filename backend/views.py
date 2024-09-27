@@ -175,3 +175,22 @@ class EditAgencyView(APIView):
       serializer.save()
       return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NonStaffUsersView(APIView):
+  permission_classes = [permissions.IsAdminUser]
+
+  def get(self, request):
+    non_staff_users = CustomUser.objects.filter(is_staff=False)
+    user_data = [
+      {
+        "id": user.id,
+        "email": user.email,
+        "name": user.name,
+        "is_active": user.is_active,
+        "is_staff": user.is_staff
+      }
+      for user in non_staff_users
+    ]
+    return Response(user_data, status=status.HTTP_200_OK)
+
